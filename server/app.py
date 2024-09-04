@@ -129,7 +129,16 @@ class MembersResource(Resource):
 
         db.session.commit()
         return {'message': 'Member updated'}, 200
+    
+    @jwt_required()
+    def delete(self, member_id):
+        member = Member.query.get(member_id)
+        if not member:
+            return {'message': 'Member not found'}, 404
 
+        db.session.delete(member)
+        db.session.commit()
+        return {'message': 'Member deleted'}, 200
             
 api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
