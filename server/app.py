@@ -2,8 +2,8 @@ from config import app, db, api
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import Librarian, Book, Member
-from datetime import timedelta
+from models import Librarian, Book, Member, Transaction
+from datetime import timedelta, datetime
 
 
 class Login(Resource):
@@ -139,7 +139,40 @@ class MembersResource(Resource):
         db.session.delete(member)
         db.session.commit()
         return {'message': 'Member deleted'}, 200
-            
+    
+class TransactionsResource(Resource):
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        member_id = data['member_id']
+        book_id = data['book_id']
+
+        # Check if the book exists and has available quantity
+        book = Book.query.get(book_id)
+        if not book or book.quantity < 1:
+            return {'message': 'Book not available'}, 400
+
+        # Check if the member exists
+        member = Member.query.get(member_id)
+        if not member:
+            return {'message': 'Member not found'}, 404
+
+        # Issue the book (create a new transaction)
+        transaction = Transaction(
+            book_id=book_id,
+            member_id=member_id,
+            issue_date=datetime.utcnow(),
+            rent_fee=0.0  # Initial fee is 0.0; will be calculated on return
+        )
+
+        # Reduce the book quantity
+        book.quantity -= 1
+
+        db.session.add(transaction)
+        db.session.commit()
+        return {'message': 'Book issued', 'transaction_id': transaction.id}, 201
+
+api.add_resource(TransactionsResource, '/transactions', '/transactions/<int:transaction_id>')           
 api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
 api.add_resource(Login, '/login')
