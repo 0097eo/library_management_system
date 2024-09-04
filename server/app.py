@@ -54,6 +54,21 @@ class BooksResource(Resource):
         db.session.add(new_book)
         db.session.commit()
         return {'message': 'Book created', 'id': new_book.id}, 201
+    
+    @jwt_required()
+    def put(self, book_id):
+        book = Book.query.get(book_id)
+        if not book:
+            return {'message': 'Book not found'}, 404
+        
+        data = request.get_json()
+        book.title = data.get('title', book.title)
+        book.author = data.get('author', book.author)
+        book.isbn = data.get('isbn', book.isbn)
+        book.quantity = data.get('quantity', book.quantity)
+
+        db.session.commit()
+        return {'message': "Book updated successfully"}, 201
             
 
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
