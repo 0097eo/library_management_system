@@ -41,7 +41,18 @@ class BooksResource(Resource):
                 'updated_at': book.updated_at.strftime('%Y-%m-%d')
             }, 200
         else:
-            books = Book.query.all()
+            # Get search parameters
+            title = request.args.get('title')
+            author = request.args.get('author')
+
+            # Search by title and author
+            query = Book.query
+            if title:
+                query = query.filter(Book.title.ilike(f'%{title}%'))
+            if author:
+                query = query.filter(Book.author.ilike(f'%{author}%'))
+            
+            books = query.all()
             return [{'id': book.id, 'title': book.title, 'author': book.author, 'isbn': book.isbn, 'quantity': book.quantity } for book in books], 200
 
     @jwt_required()
