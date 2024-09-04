@@ -100,12 +100,29 @@ class MembersResource(Resource):
             member = Member.query.get(member_id)
             if not member:
                 return {'message': 'Member not found'}, 404
+            
+            # Fetch all transactions for this member
+            transactions = Transaction.query.filter_by(member_id=member.id).all()
+
+            borrowed_books = []
+            for transaction in transactions:
+                book = transaction.book
+                borrowed_books.append({
+                    'title': book.title,
+                    'author': book.author,
+                    'isbn': book.isbn,
+                    'issue_date': transaction.issue_date.strftime('%Y-%m-%d'),
+                    'return_date': transaction.return_date.strftime('%Y-%m-%d') if transaction.return_date else None
+                })
+
+                
             return {
                 'id': member.id,
                 'name': member.name,
                 'email': member.email,
                 'phone': member.phone,
                 'outstanding_debt': member.outstanding_debt,
+                'borrowed_books': borrowed_books,
                 'created_at': member.created_at.strftime('%Y-%m-%d'),
                 'updated_at': member.updated_at.strftime('%Y-%m-%d')
             }, 200
