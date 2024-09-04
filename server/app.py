@@ -5,7 +5,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from models import Librarian, Book, Member, Transaction
 from datetime import timedelta, datetime
 
-
+DAILY_RENTAL_FEE = 1.50
 class Login(Resource):
     def post(self):
         data = request.get_json()
@@ -171,6 +171,39 @@ class TransactionsResource(Resource):
         db.session.add(transaction)
         db.session.commit()
         return {'message': 'Book issued', 'transaction_id': transaction.id}, 201
+    
+    @jwt_required()
+    def put(self, transaction_id):
+        # Handle book return
+        transaction = Transaction.query.get(transaction_id)
+        if not transaction:
+            return {'message': 'Transaction not found'}, 404
+
+        if transaction.return_date:
+            return {'message': 'Book already returned'}, 400
+
+        # Set the return date to now
+        transaction.return_date = datetime.utcnow()
+        
+        # Calculate rent fee
+        days_rented = (transaction.return_date - transaction.issue_date).days
+        transaction.rent_fee = DAILY_RENTAL_FEE * max(1, days_rented)
+
+        # Update the member's outstanding debt
+        member = transaction.member
+        member.outstanding_debt += transaction.rent_fee
+
+        # Update the book quantity
+        book = transaction.book
+        book.quantity += 1
+
+        db.session.commit()
+        return {
+            'message': 'Book returned successfully',
+            'rent_fee': transaction.rent_fee,
+            'total_debt': member.outstanding_debt
+        }, 200
+
 
 api.add_resource(TransactionsResource, '/transactions', '/transactions/<int:transaction_id>')           
 api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
