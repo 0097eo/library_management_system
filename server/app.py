@@ -114,6 +114,21 @@ class MembersResource(Resource):
         db.session.add(new_member)
         db.session.commit()
         return {'message': 'Member created', 'id': new_member.id}, 201
+    
+    @jwt_required()
+    def put(self, member_id):
+        member = Member.query.get(member_id)
+        if not member:
+            return {'message': 'Member not found'}, 404
+
+        data = request.get_json()
+        member.name = data.get('name', member.name)
+        member.email = data.get('email', member.email)
+        member.phone = data.get('phone', member.phone)
+        member.outstanding_debt = data.get('outstanding_debt', member.outstanding_debt)
+
+        db.session.commit()
+        return {'message': 'Member updated'}, 200
 
             
 api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
