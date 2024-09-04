@@ -2,7 +2,7 @@ from config import app, db, api
 from flask import request
 from flask_restful import Resource
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, get_jwt_identity
-from models import Librarian, Book
+from models import Librarian, Book, Member
 from datetime import timedelta
 
 
@@ -37,6 +37,8 @@ class BooksResource(Resource):
                 'author': book.author,
                 'isbn': book.isbn,
                 'quantity': book.quantity,
+                'created_at': book.created_at.strftime('%Y-%m-%d'),
+                'updated_at': book.updated_at.strftime('%Y-%m-%d')
             }, 200
         else:
             books = Book.query.all()
@@ -79,8 +81,29 @@ class BooksResource(Resource):
         db.session.delete(book)
         db.session.commit()
         return {'message': 'Book deleted successfully'}, 200
-            
+    
+class MembersResource(Resource):
+    @jwt_required()
+    def get(self, member_id=None):
+        if member_id:
+            member = Member.query.get(member_id)
+            if not member:
+                return {'message': 'Member not found'}, 404
+            return {
+                'id': member.id,
+                'name': member.name,
+                'email': member.email,
+                'phone': member.phone,
+                'outstanding_debt': member.outstanding_debt,
+                'created_at': member.created_at.strftime('%Y-%m-%d'),
+                'updated_at': member.updated_at.strftime('%Y-%m-%d')
+            }, 200
+        else:
+            members = Member.query.all()
+            return [{'id': member.id, 'name': member.name, 'email': member.email, 'phone': member.phone, 'outstanding_debt': member.outstanding_debt} for member in members], 200
 
+            
+api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
 api.add_resource(Login, '/login')
 if __name__ == '__main__':
