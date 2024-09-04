@@ -69,6 +69,16 @@ class BooksResource(Resource):
 
         db.session.commit()
         return {'message': "Book updated successfully"}, 201
+    
+    @jwt_required()
+    def delete(self, book_id):
+        book = Book.query.get(book_id)
+        if not book:
+            return {'message': 'Book not found'}, 404
+        
+        db.session.delete(book)
+        db.session.commit()
+        return {'message': 'Book deleted successfully'}, 200
             
 
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
