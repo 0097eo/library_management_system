@@ -147,30 +147,34 @@ class TransactionsResource(Resource):
         member_id = data['member_id']
         book_id = data['book_id']
 
-        # Check if the book exists and has available quantity
-        book = Book.query.get(book_id)
-        if not book or book.quantity < 1:
-            return {'message': 'Book not available'}, 400
-
-        # Check if the member exists
+        # Ensure member's outstanding debt does not exceed KES 500
         member = Member.query.get(member_id)
         if not member:
             return {'message': 'Member not found'}, 404
 
-        # Issue the book (create a new transaction)
-        transaction = Transaction(
-            book_id=book_id,
-            member_id=member_id,
-            issue_date=datetime.utcnow(),
-            rent_fee=0.0  # Initial fee is 0.0; will be calculated on return
-        )
+        if member.outstanding_debt >= 500:
+            return {'message': 'Cannot issue book. Outstanding debt exceeds KES 500'}, 403
 
-        # Reduce the book quantity
+        # Issue the book
+        book = Book.query.get(book_id)
+        if not book:
+            return {'message': 'Book not found'}, 404
+
+        if book.quantity <= 0:
+            return {'message': 'Book not available'}, 400
+
+        transaction = Transaction(
+            member_id=member.id,
+            book_id=book.id,
+            issue_date=datetime.utcnow()
+        )
         book.quantity -= 1
 
         db.session.add(transaction)
         db.session.commit()
-        return {'message': 'Book issued', 'transaction_id': transaction.id}, 201
+
+        return {'message': 'Book issued successfully', 'transaction_id': transaction.id}, 201
+
     
     @jwt_required()
     def put(self, transaction_id):
