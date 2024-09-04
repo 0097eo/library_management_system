@@ -41,6 +41,19 @@ class BooksResource(Resource):
         else:
             books = Book.query.all()
             return [{'id': book.id, 'title': book.title, 'author': book.author, 'isbn': book.isbn, 'quantity': book.quantity } for book in books], 200
+
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        new_book = Book(
+            title=data['title'],
+            author=data['author'],
+            isbn=data['isbn'],
+            quantity=data.get('quantity', 0)
+        )
+        db.session.add(new_book)
+        db.session.commit()
+        return {'message': 'Book created', 'id': new_book.id}, 201
             
 
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
