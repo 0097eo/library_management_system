@@ -102,6 +102,19 @@ class MembersResource(Resource):
             members = Member.query.all()
             return [{'id': member.id, 'name': member.name, 'email': member.email, 'phone': member.phone, 'outstanding_debt': member.outstanding_debt} for member in members], 200
 
+    @jwt_required()
+    def post(self):
+        data = request.get_json()
+        new_member = Member(
+            name=data['name'],
+            email=data['email'],
+            phone=data.get('phone'),
+            outstanding_debt=data.get('outstanding_debt', 0.0)
+        )
+        db.session.add(new_member)
+        db.session.commit()
+        return {'message': 'Member created', 'id': new_member.id}, 201
+
             
 api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
