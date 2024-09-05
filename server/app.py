@@ -23,6 +23,25 @@ class Login(Resource):
         access_token = create_access_token(identity=user.id, expires_delta=timedelta(days=10))
         return{'access_token': access_token}, 200
     
+class LibrarianProfile(Resource):
+    @jwt_required()
+    def get(self):
+        # Get the ID of the logged-in librarian from the JWT token
+        librarian_id = get_jwt_identity()
+        
+        # Query the librarian's details from the database
+        librarian = Librarian.query.get(librarian_id)
+        if not librarian:
+            return {'message': 'Librarian not found'}, 404
+
+        # Return the librarian's profile information
+        return {
+            'id': librarian.id,
+            'username': librarian.username,
+            'created_at': librarian.created_at.strftime('%Y-%m-%d'),
+            'updated_at': librarian.updated_at.strftime('%Y-%m-%d')
+        }, 200
+    
 
 class BooksResource(Resource):
     @jwt_required()
@@ -281,7 +300,7 @@ class TransactionsResource(Resource):
             'total_debt': member.outstanding_debt
         }, 200
 
-
+api.add_resource(LibrarianProfile, '/profile')
 api.add_resource(TransactionsResource, '/transactions', '/transactions/<int:transaction_id>')           
 api.add_resource(MembersResource, '/members', '/members/<int:member_id>')
 api.add_resource(BooksResource, '/books', '/books/<int:book_id>')
