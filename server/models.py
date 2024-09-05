@@ -1,7 +1,9 @@
 from config import db, bcrypt
 from datetime import datetime
+from sqlalchemy import CheckConstraint
 
 DAILY_RENTAL_FEE = 1.50
+MAX_DEBT_LIMIT = 500
 
 class Book(db.Model):
     __tablename__ = 'books'
@@ -28,6 +30,10 @@ class Member(db.Model):
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     transactions = db.relationship('Transaction', back_populates='member', cascade="all, delete-orphan")
+
+    __table_args__ = (
+        CheckConstraint('outstanding_debt <= {}'.format(MAX_DEBT_LIMIT), name='check_outstanding_debt'),
+    )
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'
