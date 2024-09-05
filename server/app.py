@@ -179,6 +179,42 @@ class MembersResource(Resource):
     
 class TransactionsResource(Resource):
     @jwt_required()
+    def get(self):
+        
+        member_id = request.args.get('member_id')
+        book_id = request.args.get('book_id')
+
+        query = Transaction.query
+
+        if member_id:
+            query = query.filter_by(member_id=member_id)
+        if book_id:
+            query = query.filter_by(book_id=book_id)
+
+        transactions = query.all()
+
+        result = []
+        for transaction in transactions:
+            result.append({
+                'id': transaction.id,
+                'book': {
+                    'id': transaction.book.id,
+                    'title': transaction.book.title,
+                    'author': transaction.book.author,
+                    'isbn': transaction.book.isbn
+                },
+                'member': {
+                    'id': transaction.member.id,
+                    'name': transaction.member.name,
+                    'email': transaction.member.email
+                },
+                'issue_date': transaction.issue_date.strftime('%Y-%m-%d'),
+                'return_date': transaction.return_date.strftime('%Y-%m-%d') if transaction.return_date else None,
+                'rent_fee': transaction.rent_fee
+            })
+
+        return result, 200
+    @jwt_required()
     def post(self):
         data = request.get_json()
         member_id = data['member_id']
