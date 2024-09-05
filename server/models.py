@@ -14,7 +14,7 @@ class Book(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    transactions = db.relationship('Transaction', back_populates='book')
+    transactions = db.relationship('Transaction', back_populates='book', cascade="all, delete-orphan")
 
 class Member(db.Model):
     __tablename__ = 'members'
@@ -27,13 +27,13 @@ class Member(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    transactions = db.relationship('Transaction', back_populates='member')
+    transactions = db.relationship('Transaction', back_populates='member', cascade="all, delete-orphan")
 
 class Transaction(db.Model):
     __tablename__ = 'transactions'
 
     id = db.Column(db.Integer, primary_key=True)
-    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=False)
+    book_id = db.Column(db.Integer, db.ForeignKey('books.id'), nullable=True)
     member_id = db.Column(db.Integer, db.ForeignKey('members.id'), nullable=False)
     issue_date = db.Column(db.DateTime, default=datetime.utcnow)
     return_date = db.Column(db.DateTime)
