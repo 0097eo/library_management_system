@@ -1,11 +1,13 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
 import axios from 'axios';
 
+
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }) => {
         headers: { Authorization: `Bearer ${access_token}` }
       });
       setUser(userResponse.data);
+      
 
       return { success: true, user: userResponse.data };
     } catch (error) {
