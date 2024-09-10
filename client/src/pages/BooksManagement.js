@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css'
 
 const BooksManagement = () => {
   const [books, setBooks] = useState([]);
-  const [newBook, setNewBook] = useState({ title: '', author: '', isbn: '', quantity: 1 });
+  const [newBook, setNewBook] = useState({ title: '', author: '', isbn: '', quantity: 1, category: '' });
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('title');
@@ -82,7 +82,7 @@ const BooksManagement = () => {
       .then((book) => {
         setBooks([...books, book]);
         setShowAddForm(false);
-        setNewBook({ title: '', author: '', isbn: '', quantity: 1 });
+        setNewBook({ title: '', author: '', isbn: '', quantity: 1, category: '' });
         toast.success('Book added successfully');
         fetchBooks()
       })
@@ -108,7 +108,7 @@ const BooksManagement = () => {
 
   const handleCloseModal = () => {
     setShowEditModal(false);
-    setEditBook(null); // Reset editBook when modal closes
+    setEditBook(null);
   };
 
   const handleEditBook = (e) => {
@@ -150,18 +150,17 @@ const BooksManagement = () => {
       const totalBooks = books.reduce((sum, book) => sum + book.quantity, 0);
       const uniqueTitles = new Set(books.map(book => book.title)).size;
       const uniqueAuthors = new Set(books.map(book => book.author)).size;
+      const uniqueCategories = new Set(books.map(book => book.category)).size;
       const averageQuantity = (totalBooks / books.length).toFixed(2);
       const mostStockedBook = books.reduce((prev, current) => (prev.quantity > current.quantity) ? prev : current);
       const leastStockedBook = books.reduce((prev, current) => (prev.quantity < current.quantity) ? prev : current);
 
       const pdf = new jsPDF();
 
-      // Add header
       pdf.setFontSize(18);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Book Inventory Report', 20, 20);
 
-      // Add report details
       pdf.setFontSize(12);
       pdf.setFont('helvetica', 'normal');
       const details = [
@@ -169,19 +168,19 @@ const BooksManagement = () => {
         `Total Books: ${totalBooks}`,
         `Unique Titles: ${uniqueTitles}`,
         `Unique Authors: ${uniqueAuthors}`,
+        `Unique Categories: ${uniqueCategories}`,
         `Average Quantity per Book: ${averageQuantity}`,
         `Most Stocked Book: ${mostStockedBook.title} (${mostStockedBook.quantity} copies)`,
         `Least Stocked Book: ${leastStockedBook.title} (${leastStockedBook.quantity} copies)`
       ];
       pdf.text(details, 20, 30);
 
-      // Add inventory table
       pdf.setFontSize(14);
       pdf.setFont('helvetica', 'bold');
       pdf.text('Book List', 20, 80);
 
-      const tableColumn = ["ID", "Title", "Author", "ISBN", "Quantity"];
-      const tableRows = books.map(book => [book.id, book.title, book.author, book.isbn, book.quantity]);
+      const tableColumn = ["ID", "Title", "Author", "ISBN", "Category", "Quantity"];
+      const tableRows = books.map(book => [book.id, book.title, book.author, book.isbn, book.category, book.quantity]);
 
       pdf.autoTable({
         startY: 85,
@@ -214,7 +213,7 @@ const BooksManagement = () => {
             <FaFileAlt /> 
           </button>
           <button style={styles.addButton} onClick={() => setShowAddForm(!showAddForm)}>
-            {showAddForm ? <FaTimes /> : <FaPlus />}
+            {showAddForm ? <FaTimes /> : <FaPlus /> }
           </button>
         </div>
       </div>
@@ -272,6 +271,15 @@ const BooksManagement = () => {
               required
             />
             <input
+              type="text"
+              name="category"
+              placeholder="Category"
+              value={newBook.category}
+              onChange={handleInputChange}
+              style={styles.input}
+              required
+            />
+            <input
               type="number"
               name="quantity"
               placeholder="Quantity"
@@ -285,7 +293,7 @@ const BooksManagement = () => {
           </form>
         </div>
       )}
-
+      
       {/* Edit Modal */}
       {showEditModal && (
         <div style={styles.modal}>
@@ -322,6 +330,15 @@ const BooksManagement = () => {
               />
               <input
                 style={styles.input}
+                type="text"
+                name="category"
+                value={editBook.category}
+                onChange={handleInputChange}
+                placeholder="Category"
+                required
+              />
+              <input
+                style={styles.input}
                 type="number"
                 name="quantity"
                 value={editBook.quantity}
@@ -337,7 +354,6 @@ const BooksManagement = () => {
         </div>
       )}
 
-
       <table style={styles.table}>
         <thead>
           <tr>
@@ -345,6 +361,7 @@ const BooksManagement = () => {
             <th style={styles.th}>Title</th>
             <th style={styles.th}>Author</th>
             <th style={styles.th}>ISBN</th>
+            <th style={styles.th}>Category</th>
             <th style={styles.th}>Quantity</th>
             <th style={styles.th}>Actions</th>
           </tr>
@@ -356,6 +373,7 @@ const BooksManagement = () => {
               <td style={styles.td}>{book.title}</td>
               <td style={styles.td}>{book.author}</td>
               <td style={styles.td}>{book.isbn}</td>
+              <td style={styles.td}>{book.category}</td>
               <td style={styles.td}>{book.quantity}</td>
               <td style={styles.td}>
                 <button style={styles.deleteButton} onClick={() => handleDelete(book.id)}><FaTrash/></button>
