@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { FaPlus, FaTimes, FaArrowLeft, FaFileAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -15,9 +15,32 @@ const Transactions = () => {
   const [newTransaction, setNewTransaction] = useState({ member_id: '', book_id: '' });
   const [editingTransaction, setEditingTransaction] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showReturnModal, setShowReturnModal] = useState(false);
   const navigate = useNavigate();
 
   const token = localStorage.getItem('accessToken');
+  
+  const fetchTransactions = useCallback(() => {
+    fetch('/transactions', {
+      method: 'GET',
+      headers: {
+         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+      }
+    })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+      .then(data => {
+        setTransactions(data);
+      })
+      .catch(err => {
+        setError(err.message);
+
+      });
+  }, []);
 
   useEffect(() => {
     fetch('/transactions', {
@@ -61,16 +84,17 @@ const Transactions = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(newTransaction)
+      body: JSON.stringify(newTransaction),
     })
-      .then(response => response.json())
-      .then(addedTransaction => {
+      .then((response) => response.json())
+      .then((addedTransaction) => {
         setTransactions([...transactions, addedTransaction]);
         setNewTransaction({ member_id: '', book_id: '' });
         setShowAddForm(false);
         toast.success('Book issued successfully');
+        fetchTransactions();
       })
       .catch((error) => {
         toast.error('Failed to add transaction: ' + error.message);
@@ -80,6 +104,7 @@ const Transactions = () => {
   const handleEditClick = (transaction) => {
     if (!transaction.return_date) {
       setEditingTransaction({...transaction, return_date: new Date().toISOString().split('T')[0]});
+      setShowReturnModal(true);
     } else {
       toast.warn('This book has already been returned');
     }
@@ -110,11 +135,19 @@ const Transactions = () => {
         ));
         setEditingTransaction(null);
         toast.success('Book returned successfully');
+        fetchTransactions();
       })
       .catch((error) => {
         toast.error(error.message);
       });
   };
+
+  const handleCloseModal = () => {
+    setEditingTransaction(false);
+    setShowReturnModal(null);
+  };
+
+
 
   const generateReport = () => {
     const pdf = new jsPDF();
@@ -227,19 +260,22 @@ const Transactions = () => {
         </div>
       )}
 
-      {/* Edit Transaction Form */}
-      {editingTransaction && (
-        <div style={styles.formContainer}>
-          <h3>Return Book</h3>
-          <div style={styles.form}>
-            <input
-              type="date"
-              value={editingTransaction.return_date || ''}
-              onChange={(e) => setEditingTransaction({ ...editingTransaction, return_date: e.target.value })}
-              style={styles.input}
-            />
-            <button style={styles.submitButton} onClick={handleUpdateTransaction}>Return Book</button>
-            <button style={styles.cancelButton} onClick={() => setEditingTransaction(null)}>Cancel</button>
+      {/* Edit Transaction Modal */}
+      {showReturnModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+          <span style={styles.close} onClick={handleCloseModal}>&times;</span>
+            <h3>Return Book</h3>
+            <div style={styles.form}>
+              <input
+                type="date"
+                value={editingTransaction?.return_date || ''}
+                onChange={(e) => setEditingTransaction({ ...editingTransaction, return_date: e.target.value })}
+                style={styles.input}
+              />
+              <button style={styles.submitButton} onClick={handleUpdateTransaction}>Return Book</button>
+              <button style={styles.cancelButton} onClick={() => setShowReturnModal(false)}>Cancel</button>
+            </div>
           </div>
         </div>
       )}
@@ -333,21 +369,20 @@ const styles = {
     color: 'white',
     padding: '10px',
     border: 'none',
-    borderRadius: '20px',
+    borderRadius: '5px',
     cursor: 'pointer',
-    width: "50%",
-    marginLeft: "400px"
+    width: "auto",
   },
   cancelButton: {
     backgroundColor: '#6c757d',
     color: 'white',
     padding: '10px',
     border: 'none',
-    borderRadius: '20px',
+    borderRadius: '5px',
     cursor: 'pointer',
     marginTop: '10px',
-    width: "50%",
-    marginLeft: "400px"
+    width: "auto",
+    
   },
   table: {
     width: '100%',
@@ -404,6 +439,33 @@ const styles = {
   },
   backButtonHover: {
     backgroundColor: '#0056b3', // Darker blue on hover
+  },
+  modalOverlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    background: '#fff',
+    padding: '20px',
+    borderRadius: '8px',
+    width: '300px',
+  },
+  close: {
+    color: '#aaa',
+    float: 'right',
+    fontSize: '28px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  },
+  closeHover: {
+    color: 'black',
   },
 };
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaEdit, FaTrash, FaPlus, FaTimes, FaArrowLeft, FaFileAlt } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import jsPDF from 'jspdf';
@@ -10,20 +10,33 @@ const MembersManagement = () => {
   const [members, setMembers] = useState([]);
   const [newMember, setNewMember] = useState({ name: '', email: '', phone: '' });
   const [editMember, setEditMember] = useState(null);
-  const [showAddForm, setShowAddForm] = useState(false); // Control Add Member form visibility
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false); 
   const navigate = useNavigate()
 
-  useEffect(() => {
+  const fetchMembers = useCallback(() => {
     fetch('/members', {
       headers: {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
       }
     })
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => setMembers(data))
       .catch(error => console.error('Error fetching members:', error));
   }, []);
+  
+  
 
+  useEffect(() => {
+    fetchMembers()
+  }, [fetchMembers]);
+   
+  
   const handleDelete = (memberId) => {
     fetch(`/members/${memberId}`, {
       method: 'DELETE',
@@ -49,10 +62,11 @@ const MembersManagement = () => {
       .then(response => response.json())
       .then(member => {
         setMembers([...members, member]);
+        toast.success('Member added successfully')
         setShowAddForm(false); // Hide the form after adding
-        setNewMember({ name: '', email: '', phone: '' }); // Reset form fields
+        setNewMember({ name: '', email: '', phone: '' });
+        fetchMembers()
       })
-      .then(() => toast.success('Member added successfully'))
       .catch(error => console.error('Error adding member:', error));
   };
 
@@ -69,9 +83,11 @@ const MembersManagement = () => {
       .then(response => response.json())
       .then(updatedMember => {
         setMembers(members.map(member => (member.id === updatedMember.id ? updatedMember : member)));
-        setEditMember(null); // Close the edit form after updating
+        toast.success("Member details updated successfully")
+        setShowEditModal(false); // Close modal after updating
+        setEditMember(null); // Reset edit member state
+        fetchMembers()
       })
-      .then(() => toast.success('Member details updated successfully'))
       .catch(error => console.error('Error editing member:', error));
   };
 
@@ -86,7 +102,14 @@ const MembersManagement = () => {
 
   const handleEditClick = (member) => {
     setEditMember(member);
+    setShowEditModal(true); // Open edit modal
   };
+
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setShowEditModal(null);
+  };
+
 
   const generateReport = () => {
     const totalMembers = members.length;
@@ -201,40 +224,43 @@ const MembersManagement = () => {
         </div>
       )}
 
-      {/* Edit Member Form */}
-      {editMember && (
-        <div style={styles.formContainer}>
-          <h3>Edit Member</h3>
-          <form onSubmit={handleEditMember} style={styles.form}>
-            <input
-              type="text"
-              name="name"
-              placeholder="Name"
-              value={editMember.name}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-            />
-            <input
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={editMember.email}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-            />
-            <input
-              type="tel"
-              name="phone"
-              placeholder="Phone"
-              value={editMember.phone}
-              onChange={handleInputChange}
-              style={styles.input}
-            />
-            <button type="submit" style={styles.submitButton}>Update Member</button>
-            <button type="button" style={styles.cancelButton} onClick={() => setEditMember(null)}>Cancel</button> {/* Cancel Edit */}
-          </form>
+      {/* Edit Member Modal */}
+      {showEditModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalContent}>
+          <span style={styles.close} onClick={handleCloseModal}>&times;</span>
+            <h3>Edit Member</h3>
+            <form onSubmit={handleEditMember} style={styles.form}>
+              <input
+                type="text"
+                name="name"
+                placeholder="Name"
+                value={editMember.name}
+                onChange={handleInputChange}
+                style={styles.input}
+                required
+              />
+              <input
+                type="email"
+                name="email"
+                placeholder="Email"
+                value={editMember.email}
+                onChange={handleInputChange}
+                style={styles.input}
+                required
+              />
+              <input
+                type="tel"
+                name="phone"
+                placeholder="Phone"
+                value={editMember.phone}
+                onChange={handleInputChange}
+                style={styles.input}
+              />
+              <button type="submit" style={styles.submitButton}>Update Member</button>
+              <button type="button" style={styles.cancelButton} onClick={() => setShowEditModal(false)}>Cancel</button>
+            </form>
+          </div>
         </div>
       )}
 
@@ -270,7 +296,7 @@ const MembersManagement = () => {
   );
 };
 
-// Styles for buttons, form, and table
+
 const styles = {
     container: {
       padding: '20px',
@@ -305,7 +331,7 @@ const styles = {
     input: {
       padding: '10px',
       marginBottom: '10px',
-      borderRadius: '20px',
+      borderRadius: '5px',
       border: '1px solid #ccc',
     },
     reportButton: {
@@ -322,21 +348,20 @@ const styles = {
       color: 'white',
       padding: '10px',
       border: 'none',
-      borderRadius: '20px',
+      borderRadius: '5px',
       cursor: 'pointer',
-      width: "50%",
-      marginLeft: "400px"
+      width: "auto"
     },
     cancelButton: {
       backgroundColor: '#6c757d',
       color: 'white',
       padding: '10px',
       border: 'none',
-      borderRadius: '20px',
+      borderRadius: '5px',
       cursor: 'pointer',
       marginTop: '10px',
-      width: "50%",
-      marginLeft: "400px"
+      width: "auto",
+      
     },
     table: {
       width: '100%',
@@ -383,7 +408,35 @@ const styles = {
       transition: 'background-color 0.3s ease',
     },
     backButtonHover: {
-      backgroundColor: '#0056b3', // Darker blue on hover
+      backgroundColor: '#0056b3', 
+    },
+    modalOverlay: {
+      position: 'fixed',
+      top: '0',
+      left: '0',
+      right: '0',
+      bottom: '0',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    modalContent: {
+      backgroundColor: 'white',
+      padding: '20px',
+      borderRadius: '8px',
+      width: '600px',
+      boxShadow: '0 0 15px rgba(0, 0, 0, 0.1)',
+    },
+    close: {
+      color: '#aaa',
+      float: 'right',
+      fontSize: '28px',
+      fontWeight: 'bold',
+      cursor: 'pointer',
+    },
+    closeHover: {
+      color: 'black',
     },
   };
 

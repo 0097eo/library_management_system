@@ -9,10 +9,11 @@ import 'react-toastify/dist/ReactToastify.css'
 const BooksManagement = () => {
   const [books, setBooks] = useState([]);
   const [newBook, setNewBook] = useState({ title: '', author: '', isbn: '', quantity: 1 });
-  const [editBook, setEditBook] = useState(null);
   const [showAddForm, setShowAddForm] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchBy, setSearchBy] = useState('title');
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [editBook, setEditBook] = useState(null);
   const navigate = useNavigate();
 
   const fetchBooks = useCallback((search = '') => {
@@ -22,17 +23,17 @@ const BooksManagement = () => {
     }
     fetch(url, {
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      }
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      },
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch books');
         }
         return response.json();
       })
-      .then(data => setBooks(data))
-      .catch(error => {
+      .then((data) => setBooks(data))
+      .catch((error) => {
         console.error('Error fetching books:', error);
         toast.error('Failed to fetch books. Please try again.');
       });
@@ -46,17 +47,17 @@ const BooksManagement = () => {
     fetch(`/books/${bookId}`, {
       method: 'DELETE',
       headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-      }
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
+      },
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to delete book');
         }
-        setBooks(books.filter(book => book.id !== bookId));
+        setBooks(books.filter((book) => book.id !== bookId));
         toast.success('Book deleted successfully');
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error deleting book:', error);
         toast.error('Failed to delete book. Please try again.');
       });
@@ -68,23 +69,24 @@ const BooksManagement = () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
-      body: JSON.stringify(newBook)
+      body: JSON.stringify(newBook),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to add book');
         }
         return response.json();
       })
-      .then(book => {
+      .then((book) => {
         setBooks([...books, book]);
         setShowAddForm(false);
         setNewBook({ title: '', author: '', isbn: '', quantity: 1 });
         toast.success('Book added successfully');
+        fetchBooks()
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error adding book:', error);
         toast.error('Failed to add book. Please try again.');
       });
@@ -101,6 +103,12 @@ const BooksManagement = () => {
 
   const handleEditClick = (book) => {
     setEditBook(book);
+    setShowEditModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowEditModal(false);
+    setEditBook(null); // Reset editBook when modal closes
   };
 
   const handleEditBook = (e) => {
@@ -109,22 +117,24 @@ const BooksManagement = () => {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`,
       },
-      body: JSON.stringify(editBook)
+      body: JSON.stringify(editBook),
     })
-      .then(response => {
+      .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to update book');
         }
         return response.json();
       })
-      .then(updatedBook => {
-        setBooks(books.map(book => (book.id === updatedBook.id ? updatedBook : book)));
+      .then((updatedBook) => {
+        setBooks(books.map((book) => (book.id === updatedBook.id ? updatedBook : book)));
         setEditBook(null);
+        setShowEditModal(false);
         toast.success('Book updated successfully');
+        fetchBooks()
       })
-      .catch(error => {
+      .catch((error) => {
         console.error('Error editing book:', error);
         toast.error('Failed to update book. Please try again.');
       });
@@ -276,52 +286,57 @@ const BooksManagement = () => {
         </div>
       )}
 
-      {editBook && (
-        <div style={styles.formContainer}>
-          <h3>Edit Book</h3>
-          <form onSubmit={handleEditBook} style={styles.form}>
-            <input
-              type="text"
-              name="title"
-              placeholder="Title"
-              value={editBook.title}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-            />
-            <input
-              type="text"
-              name="author"
-              placeholder="Author"
-              value={editBook.author}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-            />
-            <input
-              type="text"
-              name="isbn"
-              placeholder="ISBN"
-              value={editBook.isbn}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-            />
-            <input
-              type="number"
-              name="quantity"
-              placeholder="Quantity"
-              value={editBook.quantity}
-              onChange={handleInputChange}
-              style={styles.input}
-              required
-              min="1"
-            />
-            <button type="submit" style={styles.submitButton}>Update Book</button>
-            <button type="button" style={styles.cancelButton} onClick={() => setEditBook(null)}>Cancel</button>
-          </form>
+      {/* Edit Modal */}
+      {showEditModal && (
+        <div style={styles.modal}>
+          <div style={styles.modalContent}>
+            <span style={styles.close} onClick={handleCloseModal}>&times;</span>
+            <h2>Edit Book</h2>
+            <form style={styles.form} onSubmit={handleEditBook}>
+              <input
+                style={styles.input}
+                type="text"
+                name="title"
+                value={editBook.title}
+                onChange={handleInputChange}
+                placeholder="Title"
+                required
+              />
+              <input
+                style={styles.input}
+                type="text"
+                name="author"
+                value={editBook.author}
+                onChange={handleInputChange}
+                placeholder="Author"
+                required
+              />
+              <input
+                style={styles.input}
+                type="text"
+                name="isbn"
+                value={editBook.isbn}
+                onChange={handleInputChange}
+                placeholder="ISBN"
+                required
+              />
+              <input
+                style={styles.input}
+                type="number"
+                name="quantity"
+                value={editBook.quantity}
+                onChange={handleInputChange}
+                placeholder="Quantity"
+                required
+                min="1"
+              />
+              <button type="submit" style={styles.submitButton}>Save</button>
+              <button type="button" style={styles.cancelButton} onClick={handleCloseModal}>Cancel</button>
+            </form>
+          </div>
         </div>
       )}
+
 
       <table style={styles.table}>
         <thead>
@@ -482,6 +497,34 @@ const styles = {
     border: 'none',
     borderRadius: '5px',
     cursor: 'pointer',
+  },
+  modal: {
+    display: 'block',
+    position: 'fixed',
+    zIndex: 1,
+    left: 0,
+    top: 0,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, 0.4)',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    margin: '15% auto',
+    padding: '20px',
+    border: '1px solid #888',
+    width: '50%',
+    borderRadius: '10px',
+  },
+  close: {
+    color: '#aaa',
+    float: 'right',
+    fontSize: '28px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+  },
+  closeHover: {
+    color: 'black',
   },
 };
 
