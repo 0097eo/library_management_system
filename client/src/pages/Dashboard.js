@@ -67,12 +67,14 @@ const Dashboard = () => {
   return (
     <div style={styles.container}>
       
-      <header style={styles.header}>
-        <h1 style={styles.headerTitle}>{user ? `Welcome, ${user.username}` : 'Librarian Dashboard'}</h1>
-        {user && (
-          <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
-        )}
-      </header>
+      <nav style={styles.navbar}>
+        <div style={styles.navbarContent}>
+          <h1 style={styles.welcomeText}>{user ? `Welcome, ${user.username}` : 'Librarian Dashboard'}</h1>
+          {user && (
+            <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
+          )}
+        </div>
+      </nav>
       <div style={styles.centeredContainer}>
         <Link to='/reports' style={styles.centeredLink}>View Reports</Link>
       </div>
@@ -171,18 +173,19 @@ const styles = {
     textAlign: 'left',
   },
   logoutButton: {
-    background: '#007bff',
-    color: 'white',
+    background: 'white',
+    color: '#007bff',
     border: 'none',
     padding: '8px 16px',
     borderRadius: '4px',
     cursor: 'pointer',
-    marginTop: '10px',
-    marginLeft: '30px',
+    fontSize: '1rem',
+    fontWeight: 'bold',
   },
   centeredText: {
     textAlign: 'center',
     marginBottom: '20px',
+    fontWeight: 'bold'
   },
   centeredContainer: {
     display: 'flex',
@@ -193,7 +196,28 @@ const styles = {
     textDecoration: 'none',
     color: '#007bff',
     fontSize: '18px',
+    fontWeight: 'bold'
   },
+  navbar: {
+    backgroundColor: 'white',
+    padding: '10px 20px',
+    marginBottom: '20px',
+    borderRadius: '5px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
+  },
+  navbarContent: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    width: '100%',
+    margin: '0 auto',
+  },
+  welcomeText: {
+    color: 'black',
+    margin: 0,
+    fontSize: '1.5rem',
+  },
+  
 };
 
 export default Dashboard;
