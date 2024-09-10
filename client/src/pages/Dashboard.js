@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { useAuth } from '../utils/AuthContext';
 
@@ -66,13 +66,17 @@ const Dashboard = () => {
 
   return (
     <div style={styles.container}>
+      
       <header style={styles.header}>
         <h1 style={styles.headerTitle}>{user ? `Welcome, ${user.username}` : 'Librarian Dashboard'}</h1>
         {user && (
           <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
         )}
       </header>
-      <p>(Click on a card to navigate to page)</p>
+      <div style={styles.centeredContainer}>
+        <Link to='/reports' style={styles.centeredLink}>View Reports</Link>
+      </div>
+      <p style={styles.centeredText}>(Click on a card to navigate to page)</p>
 
       <div style={styles.grid}>
         <div style={styles.card} onClick={handleTotalBooksClick}>
@@ -84,7 +88,7 @@ const Dashboard = () => {
           <p style={styles.cardContent}>{borrowedBooks}</p>
         </div>
         <div style={styles.card} onClick={handleOverdueBooksClick}>
-          <h2>Books Not Returned</h2>
+          <h2>Books Overdue</h2>
           <p style={styles.cardContent}>{overdueBooksCount}</p>
         </div>
         <div style={styles.card} onClick={handleMembersClick}>
@@ -97,7 +101,7 @@ const Dashboard = () => {
         <h2>Book Inventory</h2>
         <div style={styles.chart}>
           <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={books.slice(0, 10)}>
+            <BarChart data={books.slice(0, 20)}>
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="title" />
               <YAxis />
@@ -174,7 +178,21 @@ const styles = {
     borderRadius: '4px',
     cursor: 'pointer',
     marginTop: '10px',
-    marginLeft: '50px',
+    marginLeft: '30px',
+  },
+  centeredText: {
+    textAlign: 'center',
+    marginBottom: '20px',
+  },
+  centeredContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginTop: '20px',
+  },
+  centeredLink: {
+    textDecoration: 'none',
+    color: '#007bff',
+    fontSize: '18px',
   },
 };
 
