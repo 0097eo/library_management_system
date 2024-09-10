@@ -6,6 +6,7 @@ import BooksManagement from './pages/BooksManagement';
 import Transactions from './pages/Transactions';
 import OverdueBooksList from './pages/OverdueBooksList';
 import MembersManagement from './pages/MembersManagement';
+import ComprehensiveReports from './pages/Reports';
 import "./index.css"
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Route path='/transactions' element={<Transactions/>}/>
         <Route path='/overdue-books' element={<OverdueBooksList/>}/>
         <Route path='/members-management' element={<MembersManagement/>}/>
+        <Route path='/reports' element={<ComprehensiveReports/>}/>
       </Routes>
     </Router>
   );
