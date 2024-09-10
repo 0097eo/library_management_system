@@ -79,7 +79,7 @@ const OverdueBooksList = () => {
         <button style={styles.backButton} onClick={() => navigate(-1)}>
           <FaArrowLeft />
         </button>
-        <h2>Books Yet To Be Returned</h2>
+        <h2>Books Overdue</h2>
         <button style={styles.reportButton} onClick={generateReport}>
           <FaFileAlt />
         </button>

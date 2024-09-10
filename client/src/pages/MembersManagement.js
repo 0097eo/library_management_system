@@ -135,10 +135,10 @@ const MembersManagement = () => {
     const details = [
       `Date: ${new Date().toLocaleDateString()}`,
       `Total Members: ${totalMembers}`,
-      `Total Outstanding Debt: Ksh ${totalOutstandingDebt.toFixed(2)}`,
-      `Average Debt per Member: Ksh ${averageDebt}`,
-      `Member with Highest Debt: ${memberWithHighestDebt.name} (Ksh ${memberWithHighestDebt.outstanding_debt.toFixed(2)})`,
-      `Member with Lowest Debt: ${memberWithLowestDebt.name} (Ksh ${memberWithLowestDebt.outstanding_debt.toFixed(2)})`
+      `Total Outstanding Debt: KES ${totalOutstandingDebt.toFixed(2)}`,
+      `Average Debt per Member: KES ${averageDebt}`,
+      `Member with Highest Debt: ${memberWithHighestDebt.name} (KES ${memberWithHighestDebt.outstanding_debt.toFixed(2)})`,
+      `Member with Lowest Debt: ${memberWithLowestDebt.name} (KES ${memberWithLowestDebt.outstanding_debt.toFixed(2)})`
     ];
     pdf.text(details, 20, 30);
 
@@ -153,7 +153,7 @@ const MembersManagement = () => {
       member.name,
       member.email,
       member.phone || 'N/A',
-      `Ksh ${(member.outstanding_debt || 0).toFixed(2)}`
+      `KES ${(member.outstanding_debt || 0).toFixed(2)}`
     ]);
 
     pdf.autoTable({
@@ -283,7 +283,7 @@ const MembersManagement = () => {
               <td style={styles.td}>{member.name}</td>
               <td style={styles.td}>{member.email}</td>
               <td style={styles.td}>{member.phone || 'N/A'}</td>
-              <td style={styles.td}>Ksh {(member.outstanding_debt || 0).toFixed(2)}</td>
+              <td style={styles.td}>KES {(member.outstanding_debt || 0).toFixed(2)}</td>
               <td style={styles.td}>
                 <button style={styles.deleteButton} onClick={() => handleDelete(member.id)}><FaTrash/></button>
                 <button style={styles.editButton} onClick={() => handleEditClick(member)}><FaEdit/></button> {/* Edit button */}

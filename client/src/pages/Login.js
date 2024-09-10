@@ -13,10 +13,16 @@ const Login = () => {
     e.preventDefault();
     setError('');
     try {
-      await login(username, password);
-      navigate('/dashboard');
+      const response = await login(username, password);
+
+      // Check the success status from the AuthContext's login response
+      if (response.success) {
+        navigate('/dashboard');
+      } else {
+        setError(response.error || 'Invalid username or password');
+      }
     } catch (err) {
-      setError('Invalid username or password');
+      setError('Network error. Please try again.');
     }
   };
 
@@ -110,11 +116,12 @@ const styles = {
     borderRadius: '20px',
     cursor: 'pointer',
     width: '60%',
-    marginLeft: '80px'
+    marginLeft: '80px',
   },
   error: {
     color: 'red',
     fontSize: '14px',
+    textAlign: "center"
   },
 };
 
