@@ -1,10 +1,14 @@
 from faker import Faker
 from models import db, Book, Member, Transaction, Librarian
 from config import app
-from datetime import datetime, timedelta
+from datetime import timedelta
 import random
 
 fake = Faker()
+book_categories = [
+    "Science Fiction","Thriller", "Romance", 
+    "Historical Fiction", "Non-Fiction", "Business", "Technology"
+]
 
 def generate_phone_number():
     return f"+2547{random.randint(0, 9)}{random.randint(0, 9999999):07d}"
@@ -28,7 +32,8 @@ def seed_data():
             title=fake.catch_phrase(),
             author=fake.name(),
             isbn=fake.isbn13(),
-            quantity=random.randint(1, 10)
+            quantity=random.randint(1, 10),
+            category=random.choice(book_categories)
         )
         books.append(book)
     

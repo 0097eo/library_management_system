@@ -57,6 +57,7 @@ class BooksResource(Resource):
                 'author': book.author,
                 'isbn': book.isbn,
                 'quantity': book.quantity,
+                'category': book.category,
                 'created_at': book.created_at.strftime('%Y-%m-%d'),
                 'updated_at': book.updated_at.strftime('%Y-%m-%d')
             }, 200
@@ -73,7 +74,7 @@ class BooksResource(Resource):
                 query = query.filter(Book.author.ilike(f'%{author}%'))
             
             books = query.all()
-            return [{'id': book.id, 'title': book.title, 'author': book.author, 'isbn': book.isbn, 'quantity': book.quantity } for book in books], 200
+            return [{'id': book.id, 'title': book.title, 'author': book.author, 'isbn': book.isbn, 'category': book.category, 'quantity': book.quantity } for book in books], 200
 
     @jwt_required()
     def post(self):
@@ -82,7 +83,8 @@ class BooksResource(Resource):
             title=data['title'],
             author=data['author'],
             isbn=data['isbn'],
-            quantity=data.get('quantity', 0)
+            quantity=data.get('quantity', 0),
+            category=data['category']
         )
         db.session.add(new_book)
         db.session.commit()
@@ -99,6 +101,7 @@ class BooksResource(Resource):
         book.author = data.get('author', book.author)
         book.isbn = data.get('isbn', book.isbn)
         book.quantity = data.get('quantity', book.quantity)
+        book.category = data.get('category', book.category)
 
         db.session.commit()
         return {'message': "Book updated successfully"}, 201
