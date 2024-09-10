@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useAuth } from '../utils/AuthContext';
 
 const Dashboard = () => {
   const [books, setBooks] = useState([]);
   const [members, setMembers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
 
   useEffect(() => {
     fetch('/books', {
@@ -57,12 +59,20 @@ const Dashboard = () => {
     navigate('/members-management');
   }
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
     <div style={styles.container}>
       <header style={styles.header}>
-        <h1 style={styles.headerTitle}>Librarian Dashboard</h1>
-        <p>(Click on a card to navigate)</p>
+        <h1 style={styles.headerTitle}>{user ? `Welcome, ${user.username}` : 'Librarian Dashboard'}</h1>
+        {user && (
+          <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
+        )}
       </header>
+      <p>(Click on a card to navigate)</p>
 
       <div style={styles.grid}>
         <div style={styles.card} onClick={handleTotalBooksClick}>
@@ -155,6 +165,16 @@ const styles = {
   },
   tableHeader: {
     textAlign: 'left',
+  },
+  logoutButton: {
+    background: '#007bff',
+    color: 'white',
+    border: 'none',
+    padding: '8px 16px',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    marginTop: '10px',
+    marginLeft: '50px',
   },
 };
 
