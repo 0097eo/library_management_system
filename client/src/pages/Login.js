@@ -64,6 +64,10 @@ const styles = {
     alignItems: 'center',
     minHeight: '100vh',
     backgroundColor: '#f0f0f0',
+    backgroundImage: 'url("https://images.unsplash.com/photo-1481627834876-b7833e8f5570?q=80&w=1856&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")', // Add your image path here
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
   },
   card: {
     backgroundColor: 'white',
