@@ -125,7 +125,7 @@ const Transactions = () => {
     })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Cannot return book. Total debt would exceed Ksh 500');
+          throw new Error('Cannot return book. Total debt would exceed KES 500');
         }
         return response.json();
       })
@@ -146,8 +146,6 @@ const Transactions = () => {
     setEditingTransaction(false);
     setShowReturnModal(null);
   };
-
-
 
   const generateReport = () => {
     const pdf = new jsPDF();
@@ -170,7 +168,7 @@ const Transactions = () => {
       `Total Transactions: ${totalTransactions}`,
       `Active Transactions: ${activeTransactions}`,
       `Completed Transactions: ${completedTransactions}`,
-      `Total Rent Fee: Ksh ${totalRentFee.toFixed(2)}`,
+      `Total Rent Fee: KES ${totalRentFee.toFixed(2)}`,
     ];
     pdf.text(details, 20, 30);
 
@@ -186,7 +184,7 @@ const Transactions = () => {
       transaction.member ? transaction.member.name : 'N/A',
       new Date(transaction.issue_date).toLocaleDateString(),
       transaction.return_date ? new Date(transaction.return_date).toLocaleDateString() : 'N/A',
-      transaction.rent_fee ? `Ksh ${transaction.rent_fee.toFixed(2)}` : 'N/A'
+      transaction.rent_fee ? `KES ${transaction.rent_fee.toFixed(2)}` : 'N/A'
     ]);
 
     pdf.autoTable({
@@ -265,7 +263,7 @@ const Transactions = () => {
         <div style={styles.modalOverlay}>
           <div style={styles.modalContent}>
           <span style={styles.close} onClick={handleCloseModal}>&times;</span>
-            <h3>Return Book</h3>
+            <h3>Choose Return Date</h3>
             <div style={styles.form}>
               <input
                 type="date"
@@ -300,7 +298,7 @@ const Transactions = () => {
               <td style={styles.td}>{transaction.member ? transaction.member.name : 'N/A'}</td>
               <td style={styles.td}>{new Date(transaction.issue_date).toLocaleDateString()}</td>
               <td style={styles.td}>{transaction.return_date ? new Date(transaction.return_date).toLocaleDateString() : 'N/A'}</td>
-              <td style={styles.td}>{transaction.rent_fee ? `Ksh ${transaction.rent_fee.toFixed(2)}` : 'N/A'}</td>
+              <td style={styles.td}>{transaction.rent_fee ? `KES ${transaction.rent_fee.toFixed(2)}` : 'N/A'}</td>
               <td style={styles.td}>
                 <button 
                   style={transaction.return_date ? styles.disabledButton : styles.editButton}
