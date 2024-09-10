@@ -214,7 +214,7 @@ const Transactions = () => {
         <h2>Transactions</h2>
         <div>
           <button style={styles.reportButton} onClick={generateReport}>
-            <FaFileAlt /> 
+            <FaFileAlt /> PDF
           </button>
           <button style={styles.addButton} onClick={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? <FaTimes/> : <FaPlus/>}
@@ -320,6 +320,7 @@ const styles = {
   container: {
     padding: '20px',
     fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f0f0f0',
   },
   header: {
     display: 'flex',
@@ -388,6 +389,7 @@ const styles = {
     marginTop: '20px',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    backgroundColor: "white"
   },
   deleteButton: {
     backgroundColor: '#dc3545',

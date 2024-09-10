@@ -81,7 +81,7 @@ const OverdueBooksList = () => {
         </button>
         <h2>Books Overdue</h2>
         <button style={styles.reportButton} onClick={generateReport}>
-          <FaFileAlt />
+          <FaFileAlt /> PDF
         </button>
       </div>
       {overdueBooks.length > 0 ? (
@@ -120,6 +120,8 @@ const styles = {
   container: {
     padding: '20px',
     fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f0f0f0',
+    height: '100vh'
   },
   header: {
     display: 'flex',
@@ -133,6 +135,7 @@ const styles = {
     marginTop: '20px',
     borderRadius: '8px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+    backgroundColor: 'white'
   },
   th: {
     backgroundColor: '#f8f9fa',
@@ -155,12 +158,12 @@ const styles = {
     transition: 'background-color 0.3s ease',
   },
   backButtonHover: {
-    backgroundColor: '#0056b3', // Darker blue on hover
+    backgroundColor: '#0056b3',
   },
   reportButton: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: '#28a745',
+    backgroundColor: '#17a2b8',
     color: 'white',
     padding: '10px 15px',
     border: 'none',

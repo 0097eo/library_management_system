@@ -210,7 +210,7 @@ const BooksManagement = () => {
         <h2>Books Management</h2>
         <div>
           <button style={styles.reportButton} onClick={generateReport}>
-            <FaFileAlt /> 
+            <FaFileAlt /> PDF
           </button>
           <button style={styles.addButton} onClick={() => setShowAddForm(!showAddForm)}>
             {showAddForm ? <FaTimes /> : <FaPlus /> }
@@ -391,6 +391,7 @@ const styles = {
   container: {
     padding: '20px',
     fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f0f0f0'
   },
   header: {
     display: 'flex',
@@ -488,6 +489,8 @@ const styles = {
     width: '100%',
     borderCollapse: 'collapse',
     marginTop: '20px',
+    backgroundColor: 'white',
+    borderRadius: '5px'
   },
   th: {
     backgroundColor: '#f8f9fa',

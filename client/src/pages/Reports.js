@@ -129,7 +129,7 @@ const ComprehensiveReports = () => {
         </button>
         <h2>Reports</h2>
         <button style={styles.reportButton} onClick={generatePDF}>
-          <FaFileAlt /> Generate PDF Report
+          <FaFileAlt /> PDF
         </button>
       </div>
 
@@ -213,6 +213,7 @@ const styles = {
   container: {
     padding: '20px',
     fontFamily: 'Arial, sans-serif',
+    backgroundColor: '#f0f0f0'
   },
   header: {
     display: 'flex',
@@ -234,7 +235,7 @@ const styles = {
   reportButton: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: '#28a745',
+    backgroundColor: '#17a2b8',
     color: 'white',
     padding: '10px 15px',
     border: 'none',
@@ -244,6 +245,10 @@ const styles = {
   },
   chartContainer: {
     marginBottom: '40px',
+    borderRadius: '8px',
+    backgroundColor: "white",
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+
   },
   chartTitleContainer: {
     display: 'flex',
