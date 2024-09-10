@@ -6,6 +6,7 @@ from models import Librarian, Book, Member, Transaction
 from datetime import timedelta, datetime
 
 DAILY_RENTAL_FEE = 1.50
+MAX_DEBT_LIMIT = 500
 class Login(Resource):
     def post(self):
         data = request.get_json()
@@ -199,7 +200,6 @@ class MembersResource(Resource):
 class TransactionsResource(Resource):
     @jwt_required()
     def get(self):
-        
         member_id = request.args.get('member_id')
         book_id = request.args.get('book_id')
 
@@ -233,21 +233,20 @@ class TransactionsResource(Resource):
             })
 
         return result, 200
+
     @jwt_required()
     def post(self):
         data = request.get_json()
         member_id = data['member_id']
         book_id = data['book_id']
 
-        # Ensure member's outstanding debt does not exceed KES 500
         member = Member.query.get(member_id)
         if not member:
             return {'message': 'Member not found'}, 404
 
-        if member.outstanding_debt >= 500:
-            return {'message': 'Cannot issue book. Outstanding debt exceeds KES 500'}, 403
+        if member.outstanding_debt >= MAX_DEBT_LIMIT:
+            return {'message': f'Cannot issue book. Outstanding debt exceeds KES {MAX_DEBT_LIMIT}'}, 403
 
-        # Issue the book
         book = Book.query.get(book_id)
         if not book:
             return {'message': 'Book not found'}, 404
@@ -267,10 +266,8 @@ class TransactionsResource(Resource):
 
         return {'message': 'Book issued successfully', 'transaction_id': transaction.id}, 201
 
-    
     @jwt_required()
     def put(self, transaction_id):
-        # Handle book return
         transaction = Transaction.query.get(transaction_id)
         if not transaction:
             return {'message': 'Transaction not found'}, 404
@@ -278,16 +275,22 @@ class TransactionsResource(Resource):
         if transaction.return_date:
             return {'message': 'Book already returned'}, 400
 
-        # Set the return date to now
-        transaction.return_date = datetime.utcnow()
-        
         # Calculate rent fee
-        days_rented = (transaction.return_date - transaction.issue_date).days
-        transaction.rent_fee = DAILY_RENTAL_FEE * max(1, days_rented)
+        return_date = datetime.utcnow()
+        days_rented = (return_date - transaction.issue_date).days
+        rent_fee = DAILY_RENTAL_FEE * max(1, days_rented)
 
-        # Update the member's outstanding debt
+        # Check if returning the book would exceed the debt limit
         member = transaction.member
-        member.outstanding_debt += transaction.rent_fee
+        new_total_debt = member.outstanding_debt + rent_fee
+
+        if new_total_debt > MAX_DEBT_LIMIT:
+            return {'message': f'Cannot return book. Total debt would exceed KES {MAX_DEBT_LIMIT}'}, 403
+
+        # If we're here, it's safe to process the return
+        transaction.return_date = return_date
+        transaction.rent_fee = rent_fee
+        member.outstanding_debt = new_total_debt
 
         # Update the book quantity
         book = transaction.book
@@ -296,7 +299,7 @@ class TransactionsResource(Resource):
         db.session.commit()
         return {
             'message': 'Book returned successfully',
-            'rent_fee': transaction.rent_fee,
+            'rent_fee': rent_fee,
             'total_debt': member.outstanding_debt
         }, 200
 
