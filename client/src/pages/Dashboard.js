@@ -72,7 +72,7 @@ const Dashboard = () => {
           <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
         )}
       </header>
-      <p>(Click on a card to navigate)</p>
+      <p>(Click on a card to navigate to page)</p>
 
       <div style={styles.grid}>
         <div style={styles.card} onClick={handleTotalBooksClick}>
