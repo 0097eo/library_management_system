@@ -245,10 +245,13 @@ const styles = {
   },
   chartContainer: {
     marginBottom: '40px',
-    borderRadius: '8px',
+    borderRadius: '5px',
     backgroundColor: "white",
+    padding: '20px',
+    overflow: 'auto',
+    marginLeft: '20px',
+    marginRight: '20px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-
   },
   chartTitleContainer: {
     display: 'flex',
@@ -257,8 +260,7 @@ const styles = {
     marginBottom: '20px',
   },
   chartTitle: {
-    margin: 0,
-    padding: 0,
+    marginTop: "10px"
   },
 };
 export default ComprehensiveReports;
