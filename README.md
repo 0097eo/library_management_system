@@ -88,7 +88,7 @@ To set up the application locally, follow these steps:
 1. **Clone the Repository**
 
    ```
-   git clone https://github.com/0097eo/library_management_system/edit/main/README.md
+   git clone [https://github.com/0097eo/library_management_system/edit/main/README.md](https://github.com/0097eo/library_management_system.git)
    ```
 2. **Install dependencies**
    - backend
