@@ -50,36 +50,23 @@ The Library Management System is designed to streamline the operations of a loca
 ## Screens
 ![Screenshot from 2024-09-11 12-40-33](https://github.com/user-attachments/assets/cd6a9445-6c83-47f8-92ab-43b7b51b0e3b)
 
-![Screenshot from 2024-09-11 12-56-54](https://github.com/user-attachments/assets/dcf7e688-3074-4321-bbf7-1bc94d1c9f5c)
+![Screenshot from 2024-09-17 19-30-04](https://github.com/user-attachments/assets/0762d4fb-8ded-4391-90cf-dbf48b3beac3)
 
-![Screenshot from 2024-09-11 12-44-27](https://github.com/user-attachments/assets/d67b0e5f-2ddf-4427-8499-0df3eb138868)
+![Screenshot from 2024-09-17 19-31-30](https://github.com/user-attachments/assets/d816bde5-673e-44a8-98b0-a9c29528db86)
 
-![Screenshot from 2024-09-11 12-44-43](https://github.com/user-attachments/assets/36c8bc42-2a62-4b31-bdef-2c135f2a3bb9)
 
-![Screenshot from 2024-09-11 12-46-32](https://github.com/user-attachments/assets/603d9a65-4ad3-4ae4-a8f1-29bf272e3856)
+![Screenshot from 2024-09-17 19-33-03](https://github.com/user-attachments/assets/7c8f8886-3b92-4086-acbb-896bbeb4977c)
 
-![Screenshot from 2024-09-11 12-46-43](https://github.com/user-attachments/assets/84db49de-efa0-4d7c-bf48-8782afc8df8e)
 
-![Screenshot from 2024-09-11 12-50-16](https://github.com/user-attachments/assets/694180cb-085e-4878-bfd9-166e14dc065a)
+![Screenshot from 2024-09-17 19-33-34](https://github.com/user-attachments/assets/46cdafc3-8059-4538-b11e-1a7e889dad75)
 
-![Screenshot from 2024-09-11 12-50-33](https://github.com/user-attachments/assets/ea2e8f91-931a-447c-8114-87f05f5dcb8c)
 
-![Screenshot from 2024-09-11 12-50-54](https://github.com/user-attachments/assets/889a1823-1707-4420-825c-17bc1a804a05)
+![Screenshot from 2024-09-17 19-38-38](https://github.com/user-attachments/assets/4e7482c3-c3ad-4cd3-9f3b-cdc3d91230ad)
 
-![Screenshot from 2024-09-11 12-51-19](https://github.com/user-attachments/assets/3875f361-b6b5-40bb-8d1b-061c3d9e5a5f)
-
-![Screenshot from 2024-09-11 12-55-32](https://github.com/user-attachments/assets/46ba69c5-8486-48ec-b35c-b35acd0822c6)
-
-![Screenshot from 2024-09-11 12-56-06](https://github.com/user-attachments/assets/90fe4330-0dcd-4d36-9f6b-a92b37f83cad)
 
 ## Reports
-![Screenshot from 2024-09-11 12-59-25](https://github.com/user-attachments/assets/1318cb7a-3cd1-4fd1-8bd6-ef6efa048021)
+![Screenshot from 2024-09-17 19-39-17](https://github.com/user-attachments/assets/222a5524-21de-4a0d-a1fd-5d3e9e29805e)
 
-![Screenshot from 2024-09-11 13-00-45](https://github.com/user-attachments/assets/a6bab679-d9f1-4993-8f69-3fffefaf588f)
-
-![Screenshot from 2024-09-11 13-01-43](https://github.com/user-attachments/assets/afb7a6e9-36b7-43f6-8dbe-bb417f0eef32)
-
-![Screenshot from 2024-09-11 13-02-36](https://github.com/user-attachments/assets/8ead0d18-c0c1-42e0-8cb5-6bc2b1762987)
 
 ## Getting Started
 
