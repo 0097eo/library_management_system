@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Routes, Link, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link, useNavigate, useLocation } from 'react-router-dom';
 import { FaHome, FaBook, FaExchangeAlt, FaClock, FaUsers, FaChartBar, FaBars, FaUser, FaSignOutAlt } from 'react-icons/fa';
 import Login from './pages/Login';
 import Dashboard from './pages/Dashboard';
@@ -14,11 +14,14 @@ import "./index.css";
 const Sidebar = ({ isOpen, toggle, isMobile }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleLogout = () => {
     logout();
     navigate('/');
   };
+
+  const isActive = (path) => location.pathname === path;
 
   return (
     <div style={{
@@ -34,12 +37,54 @@ const Sidebar = ({ isOpen, toggle, isMobile }) => {
       </div>
       <nav style={styles.nav}>
         <ul style={styles.sidebarList}>
-          <li><Link to="/dashboard" style={styles.sidebarLink}><FaHome style={styles.icon} /> Dashboard</Link></li>
-          <li><Link to="/books-management" style={styles.sidebarLink}><FaBook style={styles.icon} /> Books Management</Link></li>
-          <li><Link to="/transactions" style={styles.sidebarLink}><FaExchangeAlt style={styles.icon} /> Transactions</Link></li>
-          <li><Link to="/overdue-books" style={styles.sidebarLink}><FaClock style={styles.icon} /> Overdue Books</Link></li>
-          <li><Link to="/members-management" style={styles.sidebarLink}><FaUsers style={styles.icon} /> Members Management</Link></li>
-          <li><Link to="/reports" style={styles.sidebarLink}><FaChartBar style={styles.icon} /> Reports</Link></li>
+          <li>
+            <Link to="/dashboard" style={{
+              ...styles.sidebarLink,
+              ...(isActive('/dashboard') ? styles.activeLink : {})
+            }}>
+              <FaHome style={styles.icon} /> Dashboard
+            </Link>
+          </li>
+          <li>
+            <Link to="/books-management" style={{
+              ...styles.sidebarLink,
+              ...(isActive('/books-management') ? styles.activeLink : {})
+            }}>
+              <FaBook style={styles.icon} /> Books Management
+            </Link>
+          </li>
+          <li>
+            <Link to="/transactions" style={{
+              ...styles.sidebarLink,
+              ...(isActive('/transactions') ? styles.activeLink : {})
+            }}>
+              <FaExchangeAlt style={styles.icon} /> Transactions
+            </Link>
+          </li>
+          <li>
+            <Link to="/overdue-books" style={{
+              ...styles.sidebarLink,
+              ...(isActive('/overdue-books') ? styles.activeLink : {})
+            }}>
+              <FaClock style={styles.icon} /> Overdue Books
+            </Link>
+          </li>
+          <li>
+            <Link to="/members-management" style={{
+              ...styles.sidebarLink,
+              ...(isActive('/members-management') ? styles.activeLink : {})
+            }}>
+              <FaUsers style={styles.icon} /> Members Management
+            </Link>
+          </li>
+          <li>
+            <Link to="/reports" style={{
+              ...styles.sidebarLink,
+              ...(isActive('/reports') ? styles.activeLink : {})
+            }}>
+              <FaChartBar style={styles.icon} /> Reports
+            </Link>
+          </li>
         </ul>
       </nav>
       <button onClick={handleLogout} style={styles.logoutButton}>
@@ -141,6 +186,10 @@ const styles = {
     alignItems: 'center',
     padding: '15px 20px',
     transition: 'background-color 0.2s',
+  },
+  activeLink: {
+    backgroundColor: '#555',
+    borderLeft: '4px solid #fff',
   },
   icon: {
     marginRight: '10px',
