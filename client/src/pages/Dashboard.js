@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { useAuth } from '../utils/AuthContext';
+
 
 const Dashboard = () => {
   const [books, setBooks] = useState([]);
   const [members, setMembers] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+
 
   useEffect(() => {
     fetch('/books', {
@@ -59,27 +59,8 @@ const Dashboard = () => {
     navigate('/members-management');
   }
 
-  const handleLogout = () => {
-    logout();
-    navigate('/');
-  };
-
   return (
     <div style={styles.container}>
-      
-      <nav style={styles.navbar}>
-        <div style={styles.navbarContent}>
-          <h1 style={styles.welcomeText}>{user ? `Welcome, ${user.username}` : 'Librarian Dashboard'}</h1>
-          {user && (
-            <button onClick={handleLogout} style={styles.logoutButton}>Logout</button>
-          )}
-        </div>
-      </nav>
-      <div style={styles.centeredContainer}>
-        <Link to='/reports' style={styles.centeredLink}>View Reports</Link>
-      </div>
-      <p style={styles.centeredText}>(Click on a card to navigate to page)</p>
-
       <div style={styles.grid}>
         <div style={styles.card} onClick={handleTotalBooksClick}>
           <h2>Total Books</h2>
@@ -181,41 +162,6 @@ const styles = {
     cursor: 'pointer',
     fontSize: '1rem',
     fontWeight: 'bold',
-  },
-  centeredText: {
-    textAlign: 'center',
-    marginBottom: '20px',
-    fontWeight: 'bold'
-  },
-  centeredContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginTop: '20px',
-  },
-  centeredLink: {
-    textDecoration: 'none',
-    color: '#007bff',
-    fontSize: '18px',
-    fontWeight: 'bold'
-  },
-  navbar: {
-    backgroundColor: 'white',
-    padding: '10px 20px',
-    marginBottom: '20px',
-    borderRadius: '5px',
-    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)'
-  },
-  navbarContent: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '100%',
-    margin: '0 auto',
-  },
-  welcomeText: {
-    color: 'black',
-    margin: 0,
-    fontSize: '1.5rem',
   },
   
 };
