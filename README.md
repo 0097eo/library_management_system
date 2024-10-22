@@ -112,9 +112,13 @@ To set up the application locally, follow these steps:
    python seed.py
    ```
 6. **Run the application**
-
+   server
    ```
    python app.py
+   ```
+   client
+   ```
+   npm start
    ```
 ## Usage
 - Book Management
